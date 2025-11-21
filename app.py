@@ -1,6 +1,3 @@
-# CampoDigital - Sistema de conexión entre agricultores y consumidores
-# Código Python para interactuar con la base de datos
-
 import mysql.connector
 from mysql.connector import Error
 import datetime
@@ -10,7 +7,6 @@ from typing import List, Dict, Any, Optional, Tuple
 from decimal import Decimal
 import json
 
-# Configuración de la base de datos
 DB_CONFIG = {
     'host': 'localhost',
     'database': 'campodigital',
@@ -18,7 +14,6 @@ DB_CONFIG = {
     'password': 'DIOS1234',  
 }
 
-# Clase para manejar la conexión a la base de datos
 class DatabaseManager:
     def __init__(self, config=DB_CONFIG):
         self.config = config
@@ -73,7 +68,6 @@ class DatabaseManager:
     def get_last_insert_id(self):
         return self.cursor.lastrowid
 
-# Clase base para modelos
 class BaseModel:
     def __init__(self, db_manager):
         self.db = db_manager
@@ -83,7 +77,6 @@ class BaseModel:
         return {key: value for key, value in self.__dict__.items() 
                 if not key.startswith('_') and key != 'db'}
 
-# Clase para manejar usuarios
 class UserModel(BaseModel):
     def __init__(self, db_manager):
         super().__init__(db_manager)
@@ -141,7 +134,6 @@ class UserModel(BaseModel):
         query = "SELECT * FROM users WHERE user_type = 'consumidor'"
         return self.db.fetch_all(query)
 
-# Clase para manejar productos
 class ProductModel(BaseModel):
     def __init__(self, db_manager):
         super().__init__(db_manager)
@@ -219,7 +211,6 @@ class ProductModel(BaseModel):
         query = "SELECT * FROM product_images WHERE product_id = %s"
         return self.db.fetch_all(query, (product_id,))
 
-# Clase para manejar pedidos
 class OrderModel(BaseModel):
     def __init__(self, db_manager):
         super().__init__(db_manager)
@@ -295,7 +286,6 @@ class OrderModel(BaseModel):
         query = "UPDATE orders SET payment_status = %s WHERE id = %s"
         return self.db.execute_query(query, (payment_status, order_id))
 
-# Clase para manejar reseñas
 class ReviewModel(BaseModel):
     def __init__(self, db_manager):
         super().__init__(db_manager)
@@ -349,7 +339,6 @@ class ReviewModel(BaseModel):
         result = self.db.fetch_one(query, (user_id,))
         return result['average_rating'] if result and result['average_rating'] else 0
 
-# Clase para manejar mensajes
 class MessageModel(BaseModel):
     def __init__(self, db_manager):
         super().__init__(db_manager)
@@ -393,7 +382,6 @@ class MessageModel(BaseModel):
         result = self.db.fetch_one(query, (user_id,))
         return result['unread_count'] if result else 0
 
-# Aplicación principal
 class CampoDigitalApp:
     def __init__(self):
         self.db_manager = DatabaseManager()
@@ -409,7 +397,7 @@ class CampoDigitalApp:
     def close(self):
         self.db_manager.disconnect()
 
-    # Ejemplo de flujo de compra
+   
     def purchase_flow_example(self):
         # 1. Registrar usuarios (agricultor y consumidor)
         farmer_id = self.user_model.create_user(
